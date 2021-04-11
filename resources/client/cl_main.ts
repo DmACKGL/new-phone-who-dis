@@ -10,7 +10,6 @@ import { NotesEvents } from '../../typings/notes';
 import { BankEvents } from '../../typings/bank';
 import { PhotoEvents } from '../../typings/photo';
 import { CallEvents } from '../../typings/call';
-import { MatchEvents } from '../../typings/match';
 
 let isPhoneOpen = false;
 let isPhoneReady = false;
@@ -21,7 +20,6 @@ let isPhoneReady = false;
  *
  * * * * * * * * * * * * */
 function fetchOnInitialize() {
-  isPhoneReady = true;
   emitNet(ContactEvents.GET_CONTACTS);
   emitNet(MessageEvents.FETCH_MESSAGE_GROUPS);
   emitNet(TwitterEvents.GET_OR_CREATE_PROFILE);
@@ -110,8 +108,10 @@ async function Phone(): Promise<void> {
   }
 }
 
-// triggerd when the player is ready
-onNet(PhoneEvents.PLAYER_IS_READY, fetchOnInitialize);
+// Set the global depending on the response from event
+onNet(PhoneEvents.PLAYER_IS_READY, (ready: boolean) => {
+  isPhoneReady = ready;
+});
 
 AddEventHandler('onResourceStop', function (resource: string) {
   if (resource === GetCurrentResourceName()) {
